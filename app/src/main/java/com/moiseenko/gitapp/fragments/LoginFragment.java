@@ -23,6 +23,7 @@ import com.moiseenko.gitapp.R;
 import com.moiseenko.gitapp.api.IAuth;
 import com.moiseenko.gitapp.api.IUserRepos;
 import com.moiseenko.gitapp.json.Repositories;
+import com.moiseenko.gitapp.utils.Constants;
 import com.moiseenko.gitapp.utils.Utils;
 import retrofit.Callback;
 import retrofit.RestAdapter;
@@ -37,7 +38,7 @@ import java.util.List;
  */
 public class LoginFragment extends Fragment {
 
-    public static final String API_URL = "https://api.github.com";
+
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -206,7 +207,7 @@ public class LoginFragment extends Fragment {
         @Override
         protected Boolean doInBackground(Void... params) {
             RestAdapter restAdapter = new RestAdapter.Builder()
-                    .setEndpoint(API_URL)//В метод setEndpoint передаем адрес нашего сайта
+                    .setEndpoint(Constants.API_URL)//В метод setEndpoint передаем адрес нашего сайта
                     .build();
 
             //            loginRequest(restAdapter);
@@ -246,6 +247,7 @@ public class LoginFragment extends Fragment {
 
                 @Override
                 public void failure(RetrofitError error) {
+                    showProgress(false);
                     Log.d("TEST", error.getLocalizedMessage());
                     usernameField.setError(error.getLocalizedMessage());
                 }

@@ -29,6 +29,7 @@ public class RepositoriesRecyclerFragment extends Fragment {
     private static String REPOS_LIST = "repos_List";
     private Repositories repos;
     private List<Repositories.Repos> reposList;
+    private View view;
 
 
     public RepositoriesRecyclerFragment() {
@@ -57,10 +58,15 @@ public class RepositoriesRecyclerFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_recycler, container, false);
+
+        if(view != null){
+            return view;
+        }
+
+        view = inflater.inflate(R.layout.fragment_recycler, container, false);
         reposList = repos.getReposes();
 
-        recyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         recyclerView = initRecyclerView(recyclerView);
 
         RepositoryItemAdapter.CardItemClickListener listener = new RepositoryItemAdapter.CardItemClickListener() {
@@ -99,7 +105,7 @@ public class RepositoriesRecyclerFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
 
-        return v;
+        return view;
     }
 
     private RecyclerView initRecyclerView(RecyclerView recyclerView) {

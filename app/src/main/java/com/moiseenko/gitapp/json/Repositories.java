@@ -26,6 +26,9 @@ public class Repositories implements Serializable {
         String id;
         String name;
         String full_name;
+
+        Owner owner;
+
         String size;
 
         String language;
@@ -33,6 +36,14 @@ public class Repositories implements Serializable {
         String description;
         String created_at;
         String updated_at;
+
+        public Owner getOwner() {
+            return owner;
+        }
+
+        public void setOwner(Owner owner) {
+            this.owner = owner;
+        }
 
         public String getLanguage() {
             return language;
