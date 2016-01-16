@@ -2,6 +2,7 @@ package com.moiseenko.gitapp.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +10,11 @@ import android.widget.TextView;
 import com.moiseenko.gitapp.R;
 import com.moiseenko.gitapp.json.Repositories;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -22,6 +27,8 @@ public class RepositoryItemAdapter extends RecyclerView.Adapter {
     private Context context;
     private CardItemClickListener cardItemClickListener;
     private List<Repositories.Repos> data;
+    private SimpleDateFormat input = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    private SimpleDateFormat format = new SimpleDateFormat("dd MMMM yyyy HH:mm");
 
     public RepositoryItemAdapter(List<Repositories.Repos> data, Context context, CardItemClickListener cardItemClickListener) {
         this.data = data;
@@ -34,12 +41,14 @@ public class RepositoryItemAdapter extends RecyclerView.Adapter {
         public TextView tvName;
         public TextView tvDescription;
         public TextView tvDate;
+        public TextView tvLanguage;
 
         public RepositoryItemViewHolder(View itemView) {
             super(itemView);
             tvName = (TextView) itemView.findViewById(R.id.tvRepName);
             tvDescription = (TextView) itemView.findViewById(R.id.tvDescription);
             tvDate = (TextView) itemView.findViewById(R.id.tvDate);
+            tvLanguage = (TextView) itemView.findViewById(R.id.tvLanguage);
             itemView.setOnClickListener(this);
         }
 
@@ -71,14 +80,21 @@ public class RepositoryItemAdapter extends RecyclerView.Adapter {
 
             case TYPE_HOLDER_REP:
                 RepositoryItemViewHolder h = (RepositoryItemViewHolder) holder;
-                Repositories.Repos repos = data.get(position);
-                String title = repos.getName();
-                String description = repos.getDescription();
-                String date = repos.getCreated_at();
+                Repositories.Repos repository = data.get(position);
+                String title = repository.getName();
+                String description = repository.getDescription();
+                String date = repository.getUpdated_at();
 
                 h.tvName.setText(title);
                 h.tvDescription.setText(description);
-                h.tvDate.setText(date);
+                h.tvLanguage.setText(repository.getLanguage());
+                try {
+                    h.tvDate.setText(format.format(input.parse(date)));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    h.tvDate.setText(date);
+
+                }
 
                 break;
         }

@@ -7,7 +7,7 @@
     android:clickable="true"
     android:padding="@dimen/activity_horizontal_margin"
 
-    tools:context=".LoginActivity$FullInfoFragment">
+    tools:context=".MainActivity">
 
     <TextView
         android:id="@+id/tvRepName"

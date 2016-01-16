@@ -10,6 +10,9 @@ import android.widget.TextView;
 import com.moiseenko.gitapp.R;
 import com.moiseenko.gitapp.json.Repositories;
 
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * Created by Виктор on 11.01.2016.
  */

@@ -26,6 +26,37 @@ public class Repositories implements Serializable {
         String id;
         String name;
         String full_name;
+        String size;
+
+        String language;
+
+        String description;
+        String created_at;
+        String updated_at;
+
+        public String getLanguage() {
+            return language;
+        }
+
+        public void setLanguage(String language) {
+            this.language = language;
+        }
+
+        public String getUpdated_at() {
+            return updated_at;
+        }
+
+        public void setUpdated_at(String updated_at) {
+            this.updated_at = updated_at;
+        }
+
+        public String getSize() {
+            return size;
+        }
+
+        public void setSize(String size) {
+            this.size = size;
+        }
 
         public String getDescription() {
             return description;
@@ -35,8 +66,6 @@ public class Repositories implements Serializable {
             this.description = description;
         }
 
-        String description;
-        String created_at;
 
         public String getCreated_at() {
             return created_at;
