@@ -3,6 +3,8 @@ package com.moiseenko.gitapp;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+
+import com.moiseenko.gitapp.database.OrmLiteHelper;
 import com.moiseenko.gitapp.fragments.LoginFragment;
 import retrofit.ErrorHandler;
 import retrofit.RetrofitError;
@@ -19,13 +21,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        OrmLiteHelper.setHelper(getApplicationContext());
+
         setContentView(R.layout.activity_main);
+
 
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         fragmentManager.beginTransaction().replace(R.id.container, LoginFragment.newInstance()).commit();
 
     }
+
+
 
 //    private void populateAutoComplete() {
 //        getLoaderManager().initLoader(0, null, this);

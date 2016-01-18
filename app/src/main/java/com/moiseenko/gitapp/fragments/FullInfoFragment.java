@@ -105,9 +105,8 @@ public class FullInfoFragment extends Fragment {
             @Override
             public void failure(RetrofitError error) {
                 Log.d("TEST", error.getLocalizedMessage());
-//                Error e = (Error) error.getBodyAs(Error.class);
-                tvLastCommit.append(error.getMessage());
-//                error.getResponse().
+                Error e = (Error) error.getBodyAs(Error.class);
+                tvLastCommit.append(e.getMessage());
             }
         });
     }

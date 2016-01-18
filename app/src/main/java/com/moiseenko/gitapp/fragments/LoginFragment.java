@@ -8,6 +8,8 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -45,7 +47,8 @@ public class LoginFragment extends Fragment {
     private UserLoginTask mAuthTask = null;
 
     // UI references.
-    private AutoCompleteTextView usernameField;
+    private TextInputLayout usernameView;
+    private EditText usernameField;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
@@ -67,8 +70,12 @@ public class LoginFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
-        // Set up the login form.
-        usernameField = (AutoCompleteTextView) view.findViewById(R.id.username);
+        usernameView = (TextInputLayout) view.findViewById(R.id.username_view);
+//        usernameView.setErrorEnabled(false);
+
+//        usernameView.setError(Html.fromHtml("<font color=\"#A9A9A9\">" + "Введите имя пользователя" + "</font>"));
+        usernameField = (EditText) view.findViewById(R.id.username);
+
 
         mPasswordView = (EditText) view.findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -103,7 +110,7 @@ public class LoginFragment extends Fragment {
         }
 
         // Reset errors.
-        usernameField.setError(null);
+        usernameView.setError(null);
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
@@ -122,11 +129,11 @@ public class LoginFragment extends Fragment {
 
         // Check for a valid username address.
         if (TextUtils.isEmpty(username)) {
-            usernameField.setError(getString(R.string.error_field_required));
+            usernameView.setError(getString(R.string.error_field_required));
             focusView = usernameField;
             cancel = true;
         } else if (!isUsernameValid(username)) {
-            usernameField.setError(getString(R.string.error_invalid_username));
+            usernameView.setError(getString(R.string.error_invalid_username));
             focusView = usernameField;
             cancel = true;
         }
@@ -249,7 +256,7 @@ public class LoginFragment extends Fragment {
                 public void failure(RetrofitError error) {
                     showProgress(false);
                     Log.d("TEST", error.getLocalizedMessage());
-                    usernameField.setError(error.getLocalizedMessage());
+                    usernameView.setError(error.getLocalizedMessage());
                 }
             });
         }
@@ -270,7 +277,7 @@ public class LoginFragment extends Fragment {
                     @Override
                     public void failure(RetrofitError error) {
                         Log.d("TEST", error.getLocalizedMessage());
-                        usernameField.setError(error.getLocalizedMessage());
+                        usernameView.setError(error.getLocalizedMessage());
                     }
                 });
             } catch (UnsupportedEncodingException e) {

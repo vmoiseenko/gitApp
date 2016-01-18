@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.moiseenko.gitapp.R;
 import com.moiseenko.gitapp.adapters.RepositoryItemAdapter;
+import com.moiseenko.gitapp.database.OrmLiteHelper;
 import com.moiseenko.gitapp.json.Repositories;
 
 import java.util.List;
@@ -101,6 +102,7 @@ public class RepositoriesRecyclerFragment extends Fragment {
         };
 
         adapter = new RepositoryItemAdapter(reposList, getActivity().getApplicationContext(), listener);
+        OrmLiteHelper.getHelper().addListOfRepositories(reposList);
 
         recyclerView.setAdapter(adapter);
 

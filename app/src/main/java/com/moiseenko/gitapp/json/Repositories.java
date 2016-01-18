@@ -1,5 +1,9 @@
 package com.moiseenko.gitapp.json;
 
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -22,19 +26,35 @@ public class Repositories implements Serializable {
         this.reposes = reposes;
     }
 
-    public class Repos implements Serializable{
+    @DatabaseTable(tableName = "Repos")
+    public static class Repos implements Serializable{
+
+        public Repos() {
+        }
+
+        @DatabaseField(canBeNull = false, dataType = DataType.STRING, id = true)
         String id;
+
+        @DatabaseField(canBeNull = false, dataType = DataType.STRING)
         String name;
+
+        @DatabaseField(canBeNull = false, dataType = DataType.STRING)
         String full_name;
 
         Owner owner;
 
+        @DatabaseField(canBeNull = false, dataType = DataType.STRING)
         String size;
 
+        @DatabaseField(dataType = DataType.STRING)
         String language;
 
+        @DatabaseField(canBeNull = true, dataType = DataType.STRING)
         String description;
+
+        @DatabaseField(canBeNull = false, dataType = DataType.STRING)
         String created_at;
+        @DatabaseField(canBeNull = false, dataType = DataType.STRING)
         String updated_at;
 
         public Owner getOwner() {
