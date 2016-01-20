@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Created by vmoiseenko on 23.10.2015.
  */
-public class RepositoriesRecyclerFragment extends Fragment {
+public class RepositoriesRecyclerFragment extends BaseFragment {
 
     private RecyclerView recyclerView;
     private RepositoryItemAdapter adapter;
@@ -167,6 +167,8 @@ public class RepositoriesRecyclerFragment extends Fragment {
     }
 
 
-
-
+    @Override
+    protected String getTitle() {
+        return "List of repositories";
+    }
 }

@@ -1,6 +1,7 @@
 package com.moiseenko.gitapp.adapters;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
@@ -55,7 +56,9 @@ public class RepositoryItemAdapter extends RecyclerView.Adapter {
         @Override
         public void onClick(View v) {
             if (cardItemClickListener != null) {
-                tvName.setTransitionName("tvName"+ getAdapterPosition());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    tvName.setTransitionName("tvName"+ getAdapterPosition());
+                }
                 cardItemClickListener.onItemClick(v, getAdapterPosition());
             }
         }

@@ -34,7 +34,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:counterEnabled="true"
-                app:counterMaxLength="15"
                 >
 
                 <EditText
@@ -52,7 +51,10 @@
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:id="@+id/passwordView"
+                app:counterEnabled="true"
+                >
 
                 <EditText
                     android:id="@+id/password"
@@ -68,6 +70,15 @@
                     android:text="" />
 
             </android.support.design.widget.TextInputLayout>
+
+            <android.support.v7.widget.SwitchCompat
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:id="@+id/authSwitch"
+                android:text="Authorization required"
+                android:checked="true"
+                android:paddingLeft="4dp"
+                />
 
             <Button
                 android:id="@+id/bLogin"

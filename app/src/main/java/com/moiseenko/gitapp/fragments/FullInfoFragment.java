@@ -29,7 +29,7 @@ import retrofit.client.Response;
 /**
  * Created by Виктор on 11.01.2016.
  */
-public class FullInfoFragment extends Fragment {
+public class FullInfoFragment extends BaseFragment {
 
     private String repNameId;
     private Repositories.Repos repos;
@@ -109,5 +109,10 @@ public class FullInfoFragment extends Fragment {
                 tvLastCommit.append(e.getMessage());
             }
         });
+    }
+
+    @Override
+    protected String getTitle() {
+        return "Repository info";
     }
 }

@@ -1,15 +1,20 @@
 package com.moiseenko.gitapp.fragments;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.Fragment;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
-import android.text.Html;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -17,17 +22,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.moiseenko.gitapp.MainActivity;
 import com.moiseenko.gitapp.R;
 import com.moiseenko.gitapp.api.IAuth;
 import com.moiseenko.gitapp.api.IUserRepos;
+import com.moiseenko.gitapp.json.Error;
 import com.moiseenko.gitapp.json.Repositories;
 import com.moiseenko.gitapp.utils.Constants;
 import com.moiseenko.gitapp.utils.Utils;
 import retrofit.Callback;
+import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -38,7 +46,7 @@ import java.util.List;
 /**
  * Created by Виктор on 11.01.2016.
  */
-public class LoginFragment extends Fragment {
+public class LoginFragment extends BaseFragment {
 
 
     /**
@@ -49,9 +57,11 @@ public class LoginFragment extends Fragment {
     // UI references.
     private TextInputLayout usernameView;
     private EditText usernameField;
-    private EditText mPasswordView;
+    private EditText mPasswordField;
+    private SwitchCompat mAuthSwitch;
     private View mProgressView;
     private View mLoginFormView;
+    private View mPasswordFormView;
 
     public LoginFragment() {
     }
@@ -70,15 +80,49 @@ public class LoginFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
-        usernameView = (TextInputLayout) view.findViewById(R.id.username_view);
-//        usernameView.setErrorEnabled(false);
 
-//        usernameView.setError(Html.fromHtml("<font color=\"#A9A9A9\">" + "Введите имя пользователя" + "</font>"));
+        if (ContextCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                    Manifest.permission.READ_CONTACTS)) {
+
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                new AlertDialog.Builder(getActivity())
+                        .setMessage("We want to know your Contacts, so you will need to give access for us! ;)")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ActivityCompat.requestPermissions(getActivity(),
+                                        new String[]{Manifest.permission.READ_CONTACTS},
+                                        MainActivity.MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .create()
+                        .show();
+
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.READ_CONTACTS},
+                        MainActivity.MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+
+            }
+        }
+
+        usernameView = (TextInputLayout) view.findViewById(R.id.username_view);
         usernameField = (EditText) view.findViewById(R.id.username);
 
 
-        mPasswordView = (EditText) view.findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mPasswordFormView = view.findViewById(R.id.passwordView);
+        mPasswordField = (EditText) view.findViewById(R.id.password);
+        mPasswordField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == R.id.login || id == EditorInfo.IME_NULL) {
@@ -88,6 +132,19 @@ public class LoginFragment extends Fragment {
                 return false;
             }
         });
+
+        mAuthSwitch = (SwitchCompat) view.findViewById(R.id.authSwitch);
+        mAuthSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mAuthSwitch.isChecked()){
+                    mPasswordFormView.setVisibility(View.VISIBLE);
+                } else {
+                    mPasswordFormView.setVisibility(View.GONE);
+                }
+            }
+        });
+
 
         Button bLogin = (Button) view.findViewById(R.id.bLogin);
         bLogin.setOnClickListener(new View.OnClickListener() {
@@ -111,19 +168,19 @@ public class LoginFragment extends Fragment {
 
         // Reset errors.
         usernameView.setError(null);
-        mPasswordView.setError(null);
+        mPasswordField.setError(null);
 
         // Store values at the time of the login attempt.
         String username = usernameField.getText().toString();
-        String password = mPasswordView.getText().toString();
+        String password = mPasswordField.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
+            mPasswordField.setError(getString(R.string.error_invalid_password));
+            focusView = mPasswordField;
             cancel = true;
         }
 
@@ -197,6 +254,11 @@ public class LoginFragment extends Fragment {
         }
     }
 
+    @Override
+    protected String getTitle() {
+        return "Login";
+    }
+
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
@@ -215,15 +277,23 @@ public class LoginFragment extends Fragment {
         protected Boolean doInBackground(Void... params) {
             RestAdapter restAdapter = new RestAdapter.Builder()
                     .setEndpoint(Constants.API_URL)//В метод setEndpoint передаем адрес нашего сайта
+                    .setLogLevel(RestAdapter.LogLevel.FULL)
+                    .setRequestInterceptor(new RequestInterceptor() {
+                        @Override
+                        public void intercept(RequestFacade request) {
+                            if(mAuthSwitch.isChecked()){
+                                try {
+                                    request.addHeader("Authorization", "Basic "+Utils.getBase64String(mUsername + ":" + mPassword));
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    })
                     .build();
 
-            //            loginRequest(restAdapter);
+//                loginRequest(restAdapter);
             reposRequest(restAdapter);
-            //            try {
-            //                Thread.sleep(1500);
-            //            } catch (InterruptedException e) {
-            //                return false;
-            //            }
 
 
             return true;
@@ -231,10 +301,8 @@ public class LoginFragment extends Fragment {
 
         private void reposRequest(RestAdapter restAdapter) {
             IUserRepos userRepos = restAdapter.create(IUserRepos.class);
-            userRepos.getRepos(mUsername, new Callback<List<Repositories.Repos>>() {
-
-
-                @Override
+            userRepos.getRepos( mUsername, new Callback<List<Repositories.Repos>>() {
+            @Override
                 public void success(final List<Repositories.Repos> repositories, Response response) {
                     Log.d("TEST", "retrofitOk");
                     for (int i = 0; i < repositories.size(); i++) {
@@ -254,9 +322,10 @@ public class LoginFragment extends Fragment {
 
                 @Override
                 public void failure(RetrofitError error) {
-                    showProgress(false);
                     Log.d("TEST", error.getLocalizedMessage());
-                    usernameView.setError(error.getLocalizedMessage());
+                    Error e = (Error) error.getBodyAs(Error.class);
+                    usernameView.setError(e.getMessage());
+                    showProgress(false);
                 }
             });
         }
@@ -264,20 +333,24 @@ public class LoginFragment extends Fragment {
         private void loginRequest(RestAdapter restAdapter) {
             IAuth iAuth = restAdapter.create(IAuth.class);
             try {
-                Log.d("TEST", mUsername + ":" + mPassword);
-                Log.d("TEST", Utils.getBase64String(mUsername + ":" + mPassword));
-                Log.d("TEST", Utils.getBase64String(mUsername));
+//                Log.d("TEST", mUsername + ":" + mPassword);
+//                Log.d("TEST", Utils.getBase64String(mUsername + ":" + mPassword));
+//                Log.d("TEST", Utils.getBase64String(mUsername));
 
-                iAuth.login(Utils.getBase64String(mUsername), new Callback<Response>() {
+                iAuth.login("Basic "+Utils.getBase64String(mUsername + ":" + mPassword), new Callback<Response>() {
                     @Override
                     public void success(Response response, Response response2) {
+                        showProgress(false);
+
                         Log.d("TEST", "retrofitOk");
                     }
 
                     @Override
                     public void failure(RetrofitError error) {
                         Log.d("TEST", error.getLocalizedMessage());
-                        usernameView.setError(error.getLocalizedMessage());
+                        Error e = (Error) error.getBodyAs(Error.class);
+                        usernameView.setError(e.getMessage());
+                        showProgress(false);
                     }
                 });
             } catch (UnsupportedEncodingException e) {
@@ -293,8 +366,8 @@ public class LoginFragment extends Fragment {
 
             if (!success) {
                 showProgress(false);
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+                mPasswordField.setError(getString(R.string.error_incorrect_password));
+                mPasswordField.requestFocus();
             }
         }
 

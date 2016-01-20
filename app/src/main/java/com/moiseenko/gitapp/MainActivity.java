@@ -1,11 +1,16 @@
 package com.moiseenko.gitapp;
 
 import android.app.FragmentManager;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.MenuItem;
 
 import com.moiseenko.gitapp.database.OrmLiteHelper;
 import com.moiseenko.gitapp.fragments.LoginFragment;
+import com.moiseenko.gitapp.listeners.FragmentTransactionListener;
+
 import retrofit.ErrorHandler;
 import retrofit.RetrofitError;
 
@@ -16,7 +21,9 @@ import java.net.SocketTimeoutException;
 /**
  * A login screen that offers login via username/password.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements FragmentTransactionListener {
+
+    public static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
         OrmLiteHelper.setHelper(getApplicationContext());
 
         setContentView(R.layout.activity_main);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 
         FragmentManager fragmentManager = getFragmentManager();
@@ -97,6 +106,25 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // this takes the user 'back', as if they pressed the left-facing triangle icon on the main android toolbar.
+                // if this doesn't work as desired, another possibility is to call `finish()` here.
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+    @Override
+    public void setFragmentTitle(String title) {
+        getSupportActionBar().setTitle(title);
+    }
+
     public class RetrofitErrorHandler implements ErrorHandler {
 
         @Override
@@ -120,6 +148,27 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Log.d("Test", "permission was granted, yay! Do the contacts-related task you need to do.");
+
+                } else {
+                    Log.d("Test", "permission denied, boo! Disable the functionality that depends on this permission..");
+
+                }
+                return;
+            }
+
+        }
     }
 
 
