@@ -45,7 +45,7 @@
                     android:maxLines="1"
                     android:ems="15"
                     android:singleLine="true"
-                    android:text="vmoiseenko" />
+                    android:text="" />
 
             </android.support.design.widget.TextInputLayout>
 

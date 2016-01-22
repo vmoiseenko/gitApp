@@ -74,7 +74,6 @@ public class RepositoriesRecyclerFragment extends BaseFragment {
             @Override
             public void onItemClick(View view, int position) {
 
-
                 FullInfoFragment fullInfoFragment = FullInfoFragment.newInstance(reposList.get(position));
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.addToBackStack("fullInfoFragment");
@@ -98,6 +97,7 @@ public class RepositoriesRecyclerFragment extends BaseFragment {
                 }
 
                 transaction.commit();
+//                showCollapsingFragment(view, position);
             }
         };
 
@@ -108,6 +108,31 @@ public class RepositoriesRecyclerFragment extends BaseFragment {
 
 
         return view;
+    }
+
+    private void showCollapsingFragment(View view, int position) {
+        ScrollingFragment scrollingFragment = ScrollingFragment.newInstance(reposList.get(position));
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.addToBackStack("scrollingFragment");
+        transaction.replace(R.id.root_container, scrollingFragment);
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+
+            View repName = view.findViewById(R.id.tvRepName);
+            scrollingFragment.setSharedElementEnterTransition(
+                    TransitionInflater.from(getActivity()).inflateTransition(R.transition.trans_move));
+            scrollingFragment.setEnterTransition(
+//                        TransitionInflater.from(getActivity()).inflateTransition(R.transition.trans_move));
+                    TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
+
+            scrollingFragment.setRepNameId(repName.getTransitionName());
+            transaction.addSharedElement(repName, repName.getTransitionName());
+
+            setSharedElementReturnTransition(TransitionInflater.from(getActivity()).inflateTransition(R.transition.trans_move));
+            setExitTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
+        }
+
+        transaction.commit();
     }
 
     private RecyclerView initRecyclerView(RecyclerView recyclerView) {

@@ -4,6 +4,7 @@ import android.app.FragmentManager;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 
@@ -24,6 +25,7 @@ import java.net.SocketTimeoutException;
 public class MainActivity extends AppCompatActivity implements FragmentTransactionListener {
 
     public static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +33,11 @@ public class MainActivity extends AppCompatActivity implements FragmentTransacti
         OrmLiteHelper.setHelper(getApplicationContext());
 
         setContentView(R.layout.activity_main);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
 
 
         FragmentManager fragmentManager = getFragmentManager();
@@ -122,7 +127,10 @@ public class MainActivity extends AppCompatActivity implements FragmentTransacti
 
     @Override
     public void setFragmentTitle(String title) {
-        getSupportActionBar().setTitle(title);
+//        getSupportActionBar().getCustomView()
+//        getSupportActionBar().setTitle(title);
+        toolbar.setTitle(title);
+//        toolbar.fi
     }
 
     public class RetrofitErrorHandler implements ErrorHandler {
