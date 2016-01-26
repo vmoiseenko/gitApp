@@ -1,15 +1,20 @@
 package com.moiseenko.gitapp.fragments;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextClock;
 import android.widget.TextView;
+
+import com.moiseenko.gitapp.MainActivity;
 import com.moiseenko.gitapp.R;
+import com.moiseenko.gitapp.api.API;
 import com.moiseenko.gitapp.api.ICommits;
 import com.moiseenko.gitapp.api.IUserRepos;
 import com.moiseenko.gitapp.json.Commit;
@@ -36,7 +41,7 @@ public class FullInfoFragment extends BaseFragment {
     private static String REPOS = "repos";
 
     private TextView tvLastCommit;
-
+    private ProgressBar progressBar;
 
     public FullInfoFragment() {
     }
@@ -50,6 +55,7 @@ public class FullInfoFragment extends BaseFragment {
         fragment.setArguments(args);
         return fragment;
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,18 +72,14 @@ public class FullInfoFragment extends BaseFragment {
         TextView tvName = (TextView) rootView.findViewById(R.id.tvRepName);
         TextView tvFullName = (TextView) rootView.findViewById(R.id.tvFullName);
         tvLastCommit = (TextView) rootView.findViewById(R.id.tvLastCommit);
+        progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             tvName.setTransitionName(repNameId);
         }
         tvName.setText(repos.getName());
         tvFullName.setText(repos.getFull_name());
 
-        RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint(Constants.API_URL)
-                .setLogLevel(RestAdapter.LogLevel.FULL)
-                .build();
-
-        commitsRequest(restAdapter);
+        commitsRequest();
 
         return rootView;
     }
@@ -86,13 +88,14 @@ public class FullInfoFragment extends BaseFragment {
         this.repNameId = repNameId;
     }
 
-    private void commitsRequest(RestAdapter restAdapter) {
-        ICommits iCommits = restAdapter.create(ICommits.class);
-        iCommits.getCommits(repos.getOwner().getLogin(), repos.getName(), new Callback<List<Commit>>() {
+    private void commitsRequest() {
+
+        API.commitsRequest(repos.getOwner().getLogin(), repos.getName(), new Callback<List<Commit>>() {
 
             @Override
             public void success(List<Commit> commits, Response response) {
                 Log.d("TEST", "retrofitOk");
+                progressBar.setVisibility(View.GONE);
                 for (int i = 0; i < commits.size(); i++) {
                     String message = commits.get(i).getCommit().getMessage();
                     Log.d("TEST", "commit #" + (i + 1) + " " + message);
@@ -105,6 +108,7 @@ public class FullInfoFragment extends BaseFragment {
             @Override
             public void failure(RetrofitError error) {
                 Log.d("TEST", error.getLocalizedMessage());
+                progressBar.setVisibility(View.GONE);
                 Error e = (Error) error.getBodyAs(Error.class);
                 tvLastCommit.append(e.getMessage());
             }

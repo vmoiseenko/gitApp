@@ -2,6 +2,7 @@ package com.moiseenko.gitapp.fragments;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,8 +11,12 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.moiseenko.gitapp.MainActivity;
 import com.moiseenko.gitapp.R;
 import com.moiseenko.gitapp.adapters.RepositoryItemAdapter;
 import com.moiseenko.gitapp.database.OrmLiteHelper;
@@ -47,12 +52,28 @@ public class RepositoriesRecyclerFragment extends BaseFragment {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        ((MainActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((MainActivity)getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        setHasOptionsMenu(true);
         repos = (Repositories) getArguments().getSerializable(REPOS_LIST);
     }
 
-//    public static RepositoriesRecyclerFragment newInstance(List<Repositories.Repos> repos) {
+//    @Override
+//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//        super.onCreateOptionsMenu(menu, inflater);
+//        inflater.inflate(R.menu.exit_menu, menu);
+//    }
+
+
+
+    //    public static RepositoriesRecyclerFragment newInstance(List<Repositories.Repos> repos) {
 //        return new RepositoriesRecyclerFragment();
 //    }
 
