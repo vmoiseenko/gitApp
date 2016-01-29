@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.transition.TransitionInflater;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -65,7 +66,13 @@ public class RepositoriesRecyclerFragment extends BaseFragment {
         repos = (Repositories) getArguments().getSerializable(REPOS_LIST);
     }
 
-//    @Override
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d("Test", "RepositoriesRecyclerFragment.class onStart");
+    }
+
+    //    @Override
 //    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 //        super.onCreateOptionsMenu(menu, inflater);
 //        inflater.inflate(R.menu.exit_menu, menu);
@@ -95,30 +102,8 @@ public class RepositoriesRecyclerFragment extends BaseFragment {
             @Override
             public void onItemClick(View view, int position) {
 
-                FullInfoFragment fullInfoFragment = FullInfoFragment.newInstance(reposList.get(position));
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.addToBackStack("fullInfoFragment");
-                transaction.replace(R.id.container, fullInfoFragment);
-
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-
-
-                    View repName = view.findViewById(R.id.tvRepName);
-                    fullInfoFragment.setSharedElementEnterTransition(
-                            TransitionInflater.from(getActivity()).inflateTransition(R.transition.trans_move));
-                    fullInfoFragment.setEnterTransition(
-//                        TransitionInflater.from(getActivity()).inflateTransition(R.transition.trans_move));
-                            TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
-
-                    fullInfoFragment.setRepNameId(repName.getTransitionName());
-                    transaction.addSharedElement(repName, repName.getTransitionName());
-
-                    setSharedElementReturnTransition(TransitionInflater.from(getActivity()).inflateTransition(R.transition.trans_move));
-                    setExitTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
-                }
-
-                transaction.commit();
-//                showCollapsingFragment(view, position);
+//                showRepositoryInfo(view, position);
+                showCollapsingFragment(view, position);
             }
         };
 
@@ -129,6 +114,32 @@ public class RepositoriesRecyclerFragment extends BaseFragment {
 
 
         return view;
+    }
+
+    private void showRepositoryInfo(View view, int position) {
+        FullInfoFragment fullInfoFragment = FullInfoFragment.newInstance(reposList.get(position));
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.addToBackStack("fullInfoFragment");
+        transaction.replace(R.id.container, fullInfoFragment);
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+
+
+            View repName = view.findViewById(R.id.tvRepName);
+            fullInfoFragment.setSharedElementEnterTransition(
+                    TransitionInflater.from(getActivity()).inflateTransition(R.transition.trans_move));
+            fullInfoFragment.setEnterTransition(
+//                        TransitionInflater.from(getActivity()).inflateTransition(R.transition.trans_move));
+                    TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
+
+            fullInfoFragment.setRepNameId(repName.getTransitionName());
+            transaction.addSharedElement(repName, repName.getTransitionName());
+
+            setSharedElementReturnTransition(TransitionInflater.from(getActivity()).inflateTransition(R.transition.trans_move));
+            setExitTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
+        }
+
+        transaction.commit();
     }
 
     private void showCollapsingFragment(View view, int position) {
@@ -215,6 +226,6 @@ public class RepositoriesRecyclerFragment extends BaseFragment {
 
     @Override
     protected String getTitle() {
-        return "List of repositories";
+        return getString(R.string.listOfRepositories);
     }
 }

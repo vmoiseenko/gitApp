@@ -127,8 +127,8 @@ public class MainActivity extends AppCompatActivity implements FragmentTransacti
     @Override
     public void setFragmentTitle(String title) {
 //        getSupportActionBar().getCustomView()
-//        getSupportActionBar().setTitle(title);
-        toolbar.setTitle(title);
+        getSupportActionBar().setTitle(title);
+//        toolbar.setTitle(title);
 //        toolbar.fi
     }
 

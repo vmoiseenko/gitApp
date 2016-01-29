@@ -26,7 +26,7 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        listener.setFragmentTitle(this.getTitle());
+        listener.setFragmentTitle(getTitle());
     }
 
     protected abstract String getTitle();

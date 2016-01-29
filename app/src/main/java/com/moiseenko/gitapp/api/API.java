@@ -17,7 +17,7 @@ public class API {
 
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(Constants.API_URL)
-                .setLogLevel(retrofit.RestAdapter.LogLevel.FULL)
+                .setLogLevel(Constants.RETROFIT_LOG_LEVEL)
                 .setRequestInterceptor(requestInterceptor)
                 .build();
 
@@ -28,7 +28,7 @@ public class API {
     public static void commitsRequest(String username, String repositoryName, Callback<List<Commit>> callback){
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(Constants.API_URL)
-                .setLogLevel(retrofit.RestAdapter.LogLevel.FULL)
+                .setLogLevel(Constants.RETROFIT_LOG_LEVEL)
                 .build();
 
         ICommits iCommits = restAdapter.create(ICommits.class);
